@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Dev Hub & Tools</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        :root {
+            --glass-bg: rgba(20, 25, 35, 0.4);
+            --glass-border: rgba(0, 229, 255, 0.2);
+            --text-main: #ffffff;
+            --text-muted: #a0aec0;
+            --accent: #00e5ff;
+            --accent-hover: #00b8cc;
+        }
+
+        /* Анимированный градиентный фон */
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #0d1b2a);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        header {
+            width: 100%;
+            padding: 15px 50px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 15, 25, 0.6);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+        }
+        .logo span { color: var(--accent); }
+
+        nav { display: flex; gap: 20px; }
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        nav a:hover, nav a.active-link {
+            color: var(--accent);
+            background: rgba(0, 229, 255, 0.1);
+        }
+
+        .lang-selector select {
+            background: rgba(0,0,0,0.5);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+            padding: 8px 15px;
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .lang-selector select:hover { border-color: var(--accent); }
+        .lang-selector select option { background: #0f2027; }
+
+        main {
+            max-width: 1200px;
+            width: 100%;
+            padding: 50px 20px;
+            box-sizing: border-box;
+        }
+
+        .page {
+            display: none; 
+            animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            text-align: center;
+        }
+        .page.active-page { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, #00e5ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle { color: var(--text-muted); margin-bottom: 50px; font-size: 1.2rem; }
+
+        /* Улучшенные карточки */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 30px; 
+        }
+        
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: left;
+            backdrop-filter: blur(16px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        /* Блик на карточке */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(0,229,255,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+
+        .card:hover { 
+            transform: translateY(-10px) scale(1.02); 
+            border-color: rgba(0, 229, 255, 0.5); 
+            box-shadow: 0 20px 40px rgba(0, 229, 255, 0.2);
+        }
+        .card:hover::before { opacity: 1; }
+        
+        .card h3 { margin-top: 0; color: #fff; font-size: 1.5rem; letter-spacing: 0.5px; }
+        .card p { color: var(--text-muted); line-height: 1.6; }
+        
+        .tag { 
+            background: rgba(0, 229, 255, 0.15); 
+            color: var(--accent); 
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            font-size: 0.85rem; 
+            font-weight: 600;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+        }
+        
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .link-text { color: var(--accent); font-size: 0.95rem; font-weight: 600; transition: 0.3s; }
+        .card:hover .link-text { text-shadow: 0 0 10px rgba(0, 229, 255, 0.8); padding-left: 5px; }
+
+        /* Стили для утилит */
+        .tool-container {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: left;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        textarea {
+            width: 100%; height: 140px;
+            background: rgba(0,0,0,0.4);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 15px;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            resize: vertical;
+            transition: 0.3s;
+        }
+        textarea:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 15px rgba(0,229,255,0.2); }
+        
+        button {
+            background: linear-gradient(90deg, #00e5ff, #0088cc); 
+            color: #fff; border: none;
+            padding: 12px 25px; border-radius: 10px; cursor: pointer; font-weight: 800;
+            margin-right: 15px; transition: 0.3s; text-transform: uppercase; font-size: 0.9rem;
+        }
+        button:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0, 229, 255, 0.4); }
+        
+        .stats { color: var(--text-muted); font-weight: 600; font-size: 1.1rem; }
+        .stats span { color: var(--accent); }
+        
+        /* Блок аналитики ИИ */
+        .ai-analysis-box {
+            background: rgba(0, 0, 0, 0.5); 
+            padding: 20px; 
+            border-radius: 12px; 
+            margin-bottom: 20px; 
+            min-height: 50px;
+            border-left: 4px solid var(--accent);
+        }
+
+        /* Страница "О проекте" */
+        .about-box { text-align: left; background: var(--glass-bg); padding: 40px; border-radius: 20px; border: 1px solid var(--glass-border); }
+        .about-box h3 { color: var(--accent); font-size: 1.5rem; margin-top: 0; }
+        .about-box p { color: var(--text-muted); line-height: 1.8; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">AI<span>Dev</span>Hub</div>
+        <nav>
+            <a onclick="switchPage('catalog')" id="nav-catalog" class="active-link" data-i18n="nav_catalog">Каталог ИИ</a>
+            <a onclick="switchPage('tools')" id="nav-tools" data-i18n="nav_tools">Dev Утилиты</a>
+            <a onclick="switchPage('about')" id="nav-about" data-i18n="nav_about">О проекте</a>
+        </nav>
+        <div class="lang-selector">
+            <select id="language" onchange="changeLanguage()">
+                <option value="ru">Русский</option>
+                <option value="en">English</option>
+                <option value="kz">Қазақша</option>
+                <option value="zh">中文</option>
+            </select>
+        </div>
+    </header>
+
+    <main>
+        <!-- СТРАНИЦА 1: КАТАЛОГ ИИ -->
+        <section id="page-catalog" class="page active-page">
+            <h1 data-i18n="title">Нейросети для Программистов</h1>
+            <p class="subtitle" data-i18n="subtitle">Мощнейшие инструменты для ускорения вашей разработки.</p>
+            <div class="grid" id="tools-grid"></div>
+        </section>
+
+        <!-- СТРАНИЦА 2: УТИЛИТЫ -->
+        <section id="page-tools" class="page">
+            <h1 data-i18n="tools_title">Утилиты Разработчика</h1>
+            <p class="subtitle" data-i18n="tools_subtitle">Встроенные смарт-инструменты, работающие прямо в вашем браузере.</p>
+            
+            <div class="tool-container">
+                <h3 data-i18n="analyzer_title">🤖 Умный Анализатор Кода</h3>
+                <textarea id="text-analyzer" placeholder="Вставьте ваш код (HTML, CSS, JS, Python, SQL) сюда..." oninput="analyzeText()"></textarea>
+                
+                <div class="ai-analysis-box">
+                    <span style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="ai_result">Результат анализа:</span><br>
+                    <strong id="code-explanation" style="color: #fff; font-size: 1.1rem; display: block; margin-top: 5px;" data-i18n="ai_waiting">Ожидание кода...</strong>
+                </div>
+
+                <div class="stats">
+                    <span style="color:var(--text-muted)" data-i18n="stat_chars">Символов:</span> <span id="char-count">0</span> | 
+                    <span style="color:var(--text-muted)" data-i18n="stat_words">Слов:</span> <span id="word-count">0</span> | 
+                    <span style="color:var(--text-muted)" data-i18n="stat_lines">Строк:</span> <span id="line-count">0</span>
+                </div>
+            </div>
+
+            <div class="tool-container">
+                <h3 data-i18n="base64_title">🔐 Base64 Кодировщик</h3>
+                <textarea id="base64-input" placeholder="Введите текст или токен..."></textarea>
+                <div style="margin-bottom: 20px;">
+                    <button onclick="encodeBase64()" data-i18n="btn_encode">Закодировать</button>
+                    <button onclick="decodeBase64()" data-i18n="btn_decode">Раскодировать</button>
+                </div>
+                <textarea id="base64-output" placeholder="Результат..." readonly></textarea>
+            </div>
+        </section>
+
+        <!-- СТРАНИЦА 3: О ПРОЕКТЕ -->
+        <section id="page-about" class="page">
+            <h1 data-i18n="about_title">Архитектура Проекта</h1>
+            <p class="subtitle" data-i18n="about_subtitle">Инновации под капотом этого приложения.</p>
+            <div class="about-box">
+                <h3>⚡ Single Page Application (SPA)</h3>
+                <p data-i18n="about_text_1">Приложение работает без перезагрузки страниц. Идеальная скорость отклика достигается за счет манипуляций с DOM-деревом.</p>
+                <h3 style="margin-top:30px;">🧠 Эвристический ИИ-анализатор</h3>
+                <p data-i18n="about_text_2">Встроенный алгоритм локально сканирует синтаксис вставленного кода через регулярные выражения и автоматически определяет язык (Python, JS, SQL и т.д.), объясняя его назначение.</p>
+                <h3 style="margin-top:30px;">🌍 Динамическая Мультиязычность (i18n)</h3>
+                <p data-i18n="about_text_3">Матрица переводов встроена напрямую в JavaScript. Контент мгновенно адаптируется под 4 языка, включая карточки нейросетей.</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // --- 1. РОУТИНГ ---
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active-page'));
+            document.getElementById('page-' + pageId).classList.add('active-page');
+            document.querySelectorAll('nav a').forEach(link => link.classList.remove('active-link'));
+            document.getElementById('nav-' + pageId).classList.add('active-link');
+        }
+
+        // --- 2. БАЗА ДАННЫХ И ПЕРЕВОДЫ ---
+        const i18n = {
+            ru: {
+                nav_catalog: "Каталог ИИ", nav_tools: "Dev Утилиты", nav_about: "О проекте",
+                title: "Нейросети для Программистов", subtitle: "Мощнейшие инструменты для ускорения вашей разработки.",
+                tools_title: "Утилиты Разработчика", tools_subtitle: "Встроенные смарт-инструменты, работающие прямо в вашем браузере.",
+                analyzer_title: "🤖 Умный Анализатор Кода", ai_result: "Анализ ИИ:", ai_waiting: "Ожидание кода...",
+                stat_chars: "Символов:", stat_words: "Слов:", stat_lines: "Строк:",
+                base64_title: "🔐 Base64 Кодировщик / Декодировщик", btn_encode: "Закодировать", btn_decode: "Раскодировать",
+                about_title: "Архитектура Проекта", about_subtitle: "Инновации под капотом этого приложения.",
+                about_text_1: "Приложение работает без перезагрузки страниц. Идеальная скорость отклика достигается за счет манипуляций с DOM-деревом.",
+                about_text_2: "Встроенный алгоритм локально сканирует синтаксис вставленного кода через регулярные выражения и автоматически определяет язык (Python, JS, SQL и т.д.), объясняя его назначение.",
+                about_text_3: "Матрица переводов встроена напрямую в JavaScript. Контент мгновенно адаптируется под 4 языка, включая карточки нейросетей.",
+                link_text: "Перейти на сайт ➔",
+                ai_cards: [
+                    { name: "ChatGPT (OpenAI)", desc: "Универсальная модель для поиска багов, написания скриптов и рефакторинга.", tag: "Генерация кода", url: "https://chatgpt.com" },
+                    { name: "GitHub Copilot", desc: "Лучший AI-напарник. Интегрируется в IDE и дописывает функции за вас.", tag: "Автодополнение", url: "https://github.com/features/copilot" },
+                    { name: "Claude 3.5 Sonnet", desc: "Продвинутая языковая модель от Anthropic, великолепно анализирующая сложные алгоритмы.", tag: "Анализ архитектуры", url: "https://claude.ai" },
+                    { name: "Cursor IDE", desc: "Редактор кода со встроенным ИИ, который понимает контекст всего вашего проекта целиком.", tag: "AI Редактор", url: "https://cursor.sh" },
+                    { name: "v0 by Vercel", desc: "Генерация готовых UI-компонентов (React, Tailwind) по простому текстовому описанию.", tag: "Frontend & UI", url: "https://v0.dev" },
+                    { name: "Codeium", desc: "Мощная бесплатная альтернатива Copilot. Поддерживает более 70 языков программирования.", tag: "Бесплатный Copilot", url: "https://codeium.com" },
+                    { name: "Phind", desc: "Поисковая ИИ-система специально для разработчиков. Ищет решения технических проблем в документации.", tag: "Dev Поисковик", url: "https://www.phind.com" },
+                    { name: "Midjourney", desc: "Генерация потрясающих UI/UX концептов, иконок и ассетов для веб-дизайна.", tag: "UI/UX Дизайн", url: "https://www.midjourney.com" }
+                ],
+                explain: {
+                    html: "⚡ Это HTML-разметка. Данный код отвечает за структуру веб-страницы, расположение блоков и элементов интерфейса.",
+                    css: "🎨 Это CSS-стили. Код предназначен для визуального оформления элементов (цвета, шрифты, отступы, анимации).",
+                    js: "⚙️ Это JavaScript. Скрипт выполняет программную логику, обрабатывает данные или добавляет интерактивность.",
+                    sql: "🗄️ Это SQL-запрос. Он используется для взаимодействия с базой данных (поиск, добавление или изменение информации).",
+                    python: "🐍 Это код на Python. Вероятно, он используется для серверной логики, вычислений или обработки данных.",
+                    text: "📝 Это обычный текст или неизвестный язык. Явных программных конструкций не обнаружено."
+                }
+            },
+            en: {
+                nav_catalog: "AI Catalog", nav_tools: "Dev Tools", nav_about: "About",
+                title: "AI Tools for Developers", subtitle: "Powerful tools to accelerate your software development.",
+                tools_title: "Developer Utilities", tools_subtitle: "Smart built-in tools running directly in your browser.",
+                analyzer_title: "🤖 Smart Code Analyzer", ai_result: "AI Analysis:", ai_waiting: "Waiting for code...",
+                stat_chars: "Chars:", stat_words: "Words:", stat_lines: "Lines:",
+                base64_title: "🔐 Base64 Encoder / Decoder", btn_encode: "Encode", btn_decode: "Decode",
+                about_title: "Project Architecture", about_subtitle: "Innovations under the hood of this app.",
+                about_text_1: "The application works without page reloads. Perfect response speed is achieved through DOM manipulation.",
+                about_text_2: "A built-in algorithm locally scans the syntax of the pasted code using RegEx and automatically detects the language (Python, JS, SQL, etc.).",
+                about_text_3: "The translation matrix is built directly into JS. Content instantly adapts to 4 languages.",
+                link_text: "Visit website ➔",
+                ai_cards: [
+                    { name: "ChatGPT (OpenAI)", desc: "Universal model for finding bugs, writing scripts, and refactoring.", tag: "Code Gen", url: "https://chatgpt.com" },
+                    { name: "GitHub Copilot", desc: "The best AI pair programmer. Integrates into your IDE and completes functions.", tag: "Autocomplete", url: "https://github.com/features/copilot" },
+                    { name: "Claude 3.5 Sonnet", desc: "Advanced language model by Anthropic, excellent at analyzing complex algorithms.", tag: "Architecture", url: "https://claude.ai" },
+                    { name: "Cursor IDE", desc: "AI-first code editor that understands the entire context of your codebase.", tag: "AI Editor", url: "https://cursor.sh" },
+                    { name: "v0 by Vercel", desc: "Generate production-ready UI components (React, Tailwind) from simple text prompts.", tag: "Frontend & UI", url: "https://v0.dev" },
+                    { name: "Codeium", desc: "Powerful free alternative to Copilot. Supports over 70 programming languages.", tag: "Free Copilot", url: "https://codeium.com" },
+                    { name: "Phind", desc: "AI search engine specifically for developers. Finds solutions to technical problems.", tag: "Dev Search", url: "https://www.phind.com" },
+                    { name: "Midjourney", desc: "Generate stunning UI/UX concepts, icons, and web design assets.", tag: "UI/UX Design", url: "https://www.midjourney.com" }
+                ],
+                explain: {
+                    html: "⚡ This is HTML markup. It defines the structure of a web page and its interface elements.",
+                    css: "🎨 This is CSS. The code is intended for visual styling (colors, fonts, margins, animations).",
+                    js: "⚙️ This is JavaScript. The script executes programmatic logic or adds interactivity.",
+                    sql: "🗄️ This is an SQL query. It is used to interact with a database (search, insert, or modify data).",
+                    python: "🐍 This is Python code. It's likely used for backend logic, calculations, or data processing.",
+                    text: "📝 This is plain text or an unknown language. No obvious programmatic structures detected."
+                }
+            },
+            kz: {
+                nav_catalog: "AI Каталогы", nav_tools: "Dev Құралдар", nav_about: "Жоба туралы",
+                title: "Бағдарламашыларға арналған AI", subtitle: "Әзірлеуді жылдамдатуға арналған қуатты құралдар.",
+                tools_title: "Әзірлеуші утилиталары", tools_subtitle: "Браузерде жұмыс істейтін смарт құралдар.",
+                analyzer_title: "🤖 Ақылды код анализаторы", ai_result: "AI Талдауы:", ai_waiting: "Кодты күтуде...",
+                stat_chars: "Таңбалар:", stat_words: "Сөздер:", stat_lines: "Жолдар:",
+                base64_title: "🔐 Base64 Кодтаушы", btn_encode: "Кодтау", btn_decode: "Декодтау",
+                about_title: "Жоба архитектурасы", about_subtitle: "Қосымшаның инновациялары.",
+                about_text_1: "Қосымша бетті қайта жүктемей жұмыс істейді. DOM манипуляциясы арқылы жылдамдыққа қол жеткізілді.",
+                about_text_2: "Кіріктірілген алгоритм кодтың синтаксисін сканерлеп, тілді (Python, JS, SQL) автоматты түрде анықтайды.",
+                about_text_3: "Аударма матрицасы JS-ке енгізілген. Контент 4 тілге лезде бейімделеді.",
+                link_text: "Сайтқа өту ➔",
+                ai_cards: [
+                    { name: "ChatGPT (OpenAI)", desc: "Қателерді іздеу, скрипттер жазу және рефакторингке арналған әмбебап модель.", tag: "Код генерациясы", url: "https://chatgpt.com" },
+                    { name: "GitHub Copilot", desc: "Үздік AI-серіктес. IDE-ге біріктіріліп, функцияларды сіз үшін аяқтайды.", tag: "Автотолықтыру", url: "https://github.com/features/copilot" },
+                    { name: "Claude 3.5 Sonnet", desc: "Күрделі алгоритмдерді талдауға өте жақсы Anthropic тілдік моделі.", tag: "Архитектура", url: "https://claude.ai" },
+                    { name: "Cursor IDE", desc: "Жобаңыздың толық мәнмәтінін түсінетін кіріктірілген ИИ бар код редакторы.", tag: "AI Редактор", url: "https://cursor.sh" },
+                    { name: "v0 by Vercel", desc: "Мәтіндік сипаттама арқылы дайын UI компоненттерін (React, Tailwind) жасау.", tag: "Frontend & UI", url: "https://v0.dev" },
+                    { name: "Codeium", desc: "Copilot-тың қуатты тегін баламасы. 70-тен астам тілді қолдайды.", tag: "Тегін Copilot", url: "https://codeium.com" },
+                    { name: "Phind", desc: "Әзірлеушілерге арналған ИИ іздеу жүйесі. Техникалық мәселелерді шешеді.", tag: "Dev Іздеу", url: "https://www.phind.com" },
+                    { name: "Midjourney", desc: "Веб-дизайнға арналған UI/UX концепттерін және белгішелерді жасау.", tag: "UI/UX Дизайн", url: "https://www.midjourney.com" }
+                ],
+                explain: {
+                    html: "⚡ Бұл HTML. Бұл код веб-беттің құрылымын және интерфейс элементтерін анықтайды.",
+                    css: "🎨 Бұл CSS стилдері. Код визуалды безендіруге арналған (түстер, қаріптер).",
+                    js: "⚙️ Бұл JavaScript. Скрипт логиканы орындайды немесе интерактивтілікті қосады.",
+                    sql: "🗄️ Бұл SQL сұрауы. Дерекқормен жұмыс істеу үшін қолданылады.",
+                    python: "🐍 Бұл Python коды. Ол серверлік логика немесе деректерді өңдеу үшін қолданылады.",
+                    text: "📝 Бұл қарапайым мәтін немесе белгісіз тіл."
+                }
+            },
+            zh: {
+                nav_catalog: "AI 目录", nav_tools: "开发工具", nav_about: "关于项目",
+                title: "程序员的 AI", subtitle: "加速软件开发的强大工具。",
+                tools_title: "开发者实用程序", tools_subtitle: "直接在浏览器中运行的智能内置工具。",
+                analyzer_title: "🤖 智能代码分析器", ai_result: "AI 分析:", ai_waiting: "等待代码...",
+                stat_chars: "字符:", stat_words: "字数:", stat_lines: "行数:",
+                base64_title: "🔐 Base64 编码器", btn_encode: "编码", btn_decode: "解码",
+                about_title: "项目架构", about_subtitle: "此应用程序中的创新技术。",
+                about_text_1: "该应用程序无需重新加载页面即可工作。通过操作 DOM 实现完美的响应速度。",
+                about_text_2: "内置算法使用正则表达式扫描粘贴代码的语法，自动识别语言并解释其用途。",
+                about_text_3: "翻译矩阵直接内置于 JS 中。内容瞬间适应 4 种语言。",
+                link_text: "访问网站 ➔",
+                ai_cards: [
+                    { name: "ChatGPT (OpenAI)", desc: "用于查找错误、编写脚本和重构的通用模型。", tag: "代码生成", url: "https://chatgpt.com" },
+                    { name: "GitHub Copilot", desc: "最佳 AI 结对程序员。集成到您的 IDE 中并完成功能。", tag: "自动补全", url: "https://github.com/features/copilot" },
+                    { name: "Claude 3.5 Sonnet", desc: "Anthropic 的高级语言模型，非常适合分析复杂的算法。", tag: "架构分析", url: "https://claude.ai" },
+                    { name: "Cursor IDE", desc: "内置 AI 的代码编辑器，了解您整个代码库的上下文。", tag: "AI 编辑器", url: "https://cursor.sh" },
+                    { name: "v0 by Vercel", desc: "通过简单的文本提示生成生产就绪的 UI 组件（React、Tailwind）。", tag: "前端与 UI", url: "https://v0.dev" },
+                    { name: "Codeium", desc: "强大的 Copilot 免费替代品。支持 70 多种编程语言。", tag: "免费 Copilot", url: "https://codeium.com" },
+                    { name: "Phind", desc: "专为开发人员设计的 AI 搜索引擎。在文档中寻找技术问题的解决方案。", tag: "开发搜索引擎", url: "https://www.phind.com" },
+                    { name: "Midjourney", desc: "生成令人惊叹的 UI/UX 概念、图标和网页设计资产。", tag: "UI/UX 设计", url: "https://www.midjourney.com" }
+                ],
+                explain: {
+                    html: "⚡ 这是 HTML 标记。它定义网页的结构和界面元素。",
+                    css: "🎨 这是 CSS 样式。代码旨在进行视觉设计（颜色、字体）。",
+                    js: "⚙️ 这是 JavaScript。脚本执行逻辑或添加交互性。",
+                    sql: "🗄️ 这是一个 SQL 查询。用于与数据库交互。",
+                    python: "🐍 这是 Python 代码。可能用于服务器逻辑或数据处理。",
+                    text: "📝 这是纯文本或未知语言。未检测到明显的编程结构。"
+                }
+            }
+        };
+
+        // --- 3. ЛОГИКА СМЕНЫ ЯЗЫКА ---
+        function changeLanguage() {
+            const lang = document.getElementById('language').value;
+            const t = i18n[lang];
+
+            // Тексты интерфейса
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.textContent = t[key];
+            });
+
+            // Карточки нейросетей
+            const grid = document.getElementById('tools-grid');
+            grid.innerHTML = '';
+            t.ai_cards.forEach((tool, index) => {
+                // Добавляем задержку анимации для каждой карточки
+                grid.innerHTML += `
+                    <div class="card" onclick="window.open('${tool.url}', '_blank')" style="animation: fadeIn 0.5s ease forwards ${(index * 0.1)}s; opacity: 0;">
+                        <div>
+                            <h3>${tool.name}</h3>
+                            <p>${tool.desc}</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="tag">${tool.tag}</span>
+                            <span class="link-text">${t.link_text}</span>
+                        </div>
+                    </div>`;
+            });
+
+            // Обновляем текст анализатора, если код уже вставлен
+            analyzeText();
+        }
+
+        // --- 4. ЭВРИСТИЧЕСКИЙ АНАЛИЗАТОР И УТИЛИТЫ ---
+        function analyzeText() {
+            const text = document.getElementById('text-analyzer').value;
+            const lang = document.getElementById('language').value;
+            const t = i18n[lang].explain;
+            
+            document.getElementById('char-count').innerText = text.length;
+            document.getElementById('word-count').innerText = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+            document.getElementById('line-count').innerText = text === '' ? 0 : text.split('\n').length;
+
+            const explanationEl = document.getElementById('code-explanation');
+            
+            if (text.trim() === '') {
+                explanationEl.innerText = i18n[lang].ai_waiting;
+                explanationEl.style.color = "#a0aec0";
+                return;
+            }
+
+            const isHTML = /<html|<div|<body|<script|<style/i.test(text);
+            const isCSS = /margin:|padding:|color:|background-color:|display:/i.test(text);
+            const isJS = /function|const |let |var |console\.log|document\.|=>/i.test(text);
+            const isSQL = /SELECT |INSERT |UPDATE |DELETE |FROM |WHERE /i.test(text);
+            const isPython = /def |import |print\(|class |elif |yield/i.test(text);
+            
+            if (isHTML) {
+                explanationEl.innerText = t.html; explanationEl.style.color = "#ff6b6b";
+            } else if (isCSS) {
+                explanationEl.innerText = t.css; explanationEl.style.color = "#4dabf7";
+            } else if (isJS) {
+                explanationEl.innerText = t.js; explanationEl.style.color = "#fcc419";
+            } else if (isSQL) {
+                explanationEl.innerText = t.sql; explanationEl.style.color = "#00e5ff";
+            } else if (isPython) {
+                explanationEl.innerText = t.python; explanationEl.style.color = "#5c7cfa";
+            } else if (text.length > 20) {
+                explanationEl.innerText = t.text; explanationEl.style.color = "#a0aec0";
+            } else {
+                explanationEl.innerText = i18n[lang].ai_waiting; explanationEl.style.color = "#a0aec0";
+            }
+        }
+
+        function encodeBase64() {
+            try {
+                const input = document.getElementById('base64-input').value;
+                document.getElementById('base64-output').value = btoa(unescape(encodeURIComponent(input)));
+            } catch (e) { document.getElementById('base64-output').value = "Ошибка / Error"; }
+        }
+        function decodeBase64() {
+            try {
+                const input = document.getElementById('base64-input').value;
+                document.getElementById('base64-output').value = decodeURIComponent(escape(atob(input)));
+            } catch (e) { document.getElementById('base64-output').value = "Ошибка / Error"; }
+        }
+
+        // Запуск при загрузке страницы
+        window.onload = changeLanguage;
+    </script>
+</body>
+</html>
